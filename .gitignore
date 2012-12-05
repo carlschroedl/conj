@@ -1,3 +1,8 @@
+#<carl>
+#don't include corrected data
+corrected_*
+#</carl>
+
 *.py[cod]
 
 # C extensions
