@@ -117,16 +117,18 @@ for doc in docs:
                 s = Sentence()
                 s.document = d
                 verbs = [] #list of (location, word) tuples
-
+                indexWithSpaces = 0 #index into the sentence text, a space-delimited string of tokens
                 for i, word in enumerate(words):
                     if 'V' == word.tag[0]: #if verb
-                        verbs.append((i, word))
+                        verbs.append((indexWithSpaces, word))
                     #verb, or not:
-                    if 0 != i:
+                    if 0 != i: #if beginning of sentence don't prepend space, else, do.
                         sentenceText += " "
+                    
+                    indexWithSpaces += len(word.token) + 1 # +1 for the space
 
                     sentenceText += word.token
-
+                    
                 s.text = sentenceText
                 s.document = d  
                 
