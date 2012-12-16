@@ -147,12 +147,15 @@ for doc in docs:
                     v.lemma = verbWord.lemma
                     v.rawTag = verbWord.tag
 
-                    ind, subj, imp, pres, pret, imp, irr = parseTag(verbWord.tag)
+                    ind, subj, imperative, pres, pret, imperfect, irr = parseTag(verbWord.tag)
                     v.indicative = ind
                     v.subjunctive = subj
+                    v.imperative = imperative
                     v.present = pres
                     v.preterite = pret
+                    v.imperfect = imperfect
                     v.irregular = irr
+                    
                     
                     pp(v)
                     #@todo flush v to db
