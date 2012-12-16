@@ -1,6 +1,12 @@
 #<carl>
 #don't include corrected data
 corrected_*
+#or txt files
+*.txt
+*.log
+
+#or vim swap files
+*.sw*
 #</carl>
 
 *.py[cod]
