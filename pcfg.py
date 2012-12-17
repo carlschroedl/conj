@@ -10,3 +10,4 @@ ROOT_START_TAG              = "<" + ROOT_ELT_NAME + ">"
 ROOT_END_TAG                = "</" + ROOT_ELT_NAME + ">"
 
 FIELDS_PER_LINE             = 4
+MINIMUM_SENTENCE_LENGTH     = 3

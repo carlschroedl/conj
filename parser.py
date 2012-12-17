@@ -49,9 +49,35 @@ def parseLine(line):
 #very simple for now
     return line.split()
 
-def parseTag(tag):
-    #@todo actually parse the tag
-    return (True, True, True, True, True, True, True) 
+#given a wikicorpus FreeLing-style POS tag, update verb's boolean features accordingly
+#returns the updated verb
+def getTaggedVerb(tag, verb):
+    #maps the character at tag pos '2' to the property to set true in 'verb' 
+    twoMap = {  'S' : 'subjunctive',
+                'I' : 'indicative',
+                'G' : 'gerund',
+                'N' : 'infinitive',
+                'P' : 'perfect',
+                'M' : 'subjunctive'
+    }
+    attribToSet = twoMap.get(tag[2], False)
+    if False == attribToSet:
+        print 'error parsing tag:', tag
+    else:
+        setattr(verb, attribToSet, True)
+    
+    #maps the character at tag pos '3' to the property to set true in 'verb' 
+    threeMap = {    'P' : 'present',
+                    'C' : 'conditional',
+                    'S' : 'preterite',
+                    'I' : 'imperfect'
+    }
+    
+    attribToSet = threeMap.get(tag[3], False)
+    if False != attribToSet:
+        setattr(verb, attribToSet, True)
+
+    return verb
 
 #</parse helper functions>
 
@@ -111,7 +137,7 @@ for doc in docs:
         if len(line) == 0: # if this is the end of the sentence
             if sentenceSignalsEndOfDoc(words):
                 break
-            else:
+            elif len(words) >=  pcfg.MINIMUM_SENTENCE_LENGTH :
                 #parse sentence, move into ORM objects, update DB appropriately
                 sentenceText = ''
                 s = Sentence()
@@ -138,7 +164,7 @@ for doc in docs:
                 #now construct various exercises for each verb in the sentence
 
                 exercises = []
-                for indexVerb in verbs:
+                for indexVerb in verbs: #for each (index, verb) tuple
                     #split the tuple
                     index = indexVerb[0]
                     verbWord = indexVerb[1]
@@ -148,15 +174,8 @@ for doc in docs:
                     v.token = verbWord.token
                     v.lemma = verbWord.lemma
                     v.rawTag = verbWord.tag
-
-                    ind, subj, imperative, pres, pret, imperfect, irr = parseTag(verbWord.tag)
-                    v.indicative = ind
-                    v.subjunctive = subj
-                    v.imperative = imperative
-                    v.present = pres
-                    v.preterite = pret
-                    v.imperfect = imperfect
-                    v.irregular = irr
+                    
+                    v = getTaggedVerb(verbWord.tag, v)
                     
                     
                     pp(v)
@@ -174,6 +193,9 @@ for doc in docs:
                 for exercise in exercises:
                     pp(exercise)
                     #@todo flush to db
+            #whether or not the minimum length requirement was satisfied,
+            #clear the list of words so that the next sentence can be detected
+            words = []
 
         else: #if this is not the end of a sentence, parse this line
                      

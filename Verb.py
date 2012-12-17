@@ -7,10 +7,15 @@ class Verb:
     indicative = False
     subjunctive = False
     imperative = False
+    gerund = False
+    infinitive = False
+    perfect = False
+
     #tenses
     present = False
     preterite = False
     imperfect = False
+    conditional = False
     #pattern
     irregular = False
     
