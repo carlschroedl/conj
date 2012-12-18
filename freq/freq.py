@@ -3,6 +3,9 @@ import os
 import codecs
 from pprint import pprint
 
+totalVerbs = 0
+cumulative = 0
+
 #lang_files = ['corrected_sample']
 lang_files = []
 for subdir, dirs, files in os.walk('../../tagged.es/'):
@@ -23,6 +26,18 @@ def loadProcessed(filename, dict):
 		for line in f:
 			words = line.strip().split()
 			dict[words[0][2:-2]] = dict.get(words[0][2:-2], 0) + int(words[1][:-1])
+			global totalVerbs 
+			totalVerbs += 1
+			
+# modified pprint for testing
+def p(sortedList):
+	with codecs.open('output.txt', 'w', 'ISO-8859-1') as o:
+		for tup in sortedList:
+			global totalVerbs
+			global cumulative
+			percentage = float(tup[1]) / totalVerbs
+			cumulative += percentage
+			o.write(tup[0] + ' ' + str(percentage) + ' ' + str(cumulative) + '\n')
 
 # process the files and write intermediate output				
 for fn in lang_files:
@@ -38,5 +53,4 @@ for fn in lang_files:
 	
 # write out final output
 sortedVerbs = sorted(verbs.items(), key=lambda x: x[1])[::-1]
-with codecs.open('output.txt', 'w', 'ISO-8859-1') as o:
-	pprint(sortedVerbs[:1000], o)
+p(sortedVerbs[:1000])
