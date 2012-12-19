@@ -64,13 +64,13 @@ def top(fn):
 			
 
 # process the files and write intermediate output				
-for fn in lang_files:
+'''for fn in lang_files:
 	verbs = {}
 	load('../../tagged.es/' + fn, verbs)
 	with open(fn + '_processed', 'wb') as i:
 		# pickle the dictionary into intermediate file
 		pickle.dump(verbs, i)
-
+'''
 # process the processed files to find overall frequency
 verbs = {}
 for fn in lang_files:
@@ -82,6 +82,8 @@ p(sortedVerbs[:1000])
 
 # read back the output.txt to get a dictionary representation
 freqVerbs = top('output.pkl')
+with open('freq.pkl', 'wb') as o:
+	pickle.dump(freqVerbs, o)
 pprint(freqVerbs)
 
 
