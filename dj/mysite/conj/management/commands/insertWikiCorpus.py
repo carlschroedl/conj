@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 import sys, django
 import xml.etree.ElementTree as ET
-import codecs, pprint
+import codecs, pprint, cPickle
 from inspect import getmembers
 from conj.models import *
 
@@ -55,6 +55,7 @@ class Command(BaseCommand):
     
     #given a wikicorpus FreeLing-style POS tag, update verb's boolean features accordingly
     #returns the updated verb
+    #@url http://nlp.lsi.upc.edu/freeling/doc/tagsets/tagset-es.html#verbos
     def getTaggedVerb(self, tag, verb):
         #maps the character at tag pos '2' to the property to set true in 'verb' 
         twoMap = {  'S' : 'subjunctive',
@@ -77,18 +78,48 @@ class Command(BaseCommand):
                         'I' : 'imperfect',
                         'F' : 'future'
         }
-        
+         
         attribToSet = threeMap.get(tag[3], False)
         if False != attribToSet:
             setattr(verb, attribToSet, True)
-    
+
+        fourMap = {
+                    '1' : 'firstPerson',
+                    '2' : 'secondPerson',
+                    '3' : 'thirdPerson'
+        }
+        
+        attribToSet = fourMap.get(tag[4], False)
+        if False != attribToSet:
+            setattr(verb, attribToSet, True)
+   
+        fiveMap = {
+                    'S' : 'singular',
+                    'P' : 'plural'
+        }
+
+        attribToSet = fiveMap.get(tag[5], False)
+        if False != attribToSet:
+            setattr(verb, attribToSet, True)
+
         return verb
     
     #</parse helper functions>
     
     #<correct missing root node>
     def handle(self, *args, **options): 
-        filename = args[0]
+        if 0 == len(args):
+            print "No file name specified"
+            return
+        if 0 < len(args):
+            filename = args[0]
+        if 2 == len(args):
+            freqDictFile = open(args[1])
+            freqDict = cPickle.load(freqDictFile)
+            pprint.pprint(freqDict)
+            exit()
+        else:
+            freqDict = {}
         file = codecs.open(filename, 'r', pcfg.ENCODING)
         firstline = file.readline().strip()
         
@@ -183,7 +214,8 @@ class Command(BaseCommand):
                             v.token = verbWord.token
                             v.lemma = verbWord.lemma
                             v.rawTag = verbWord.tag
-                            
+                            if v.lemma in freqDict:
+                                v.frequent = True
                             v = self.getTaggedVerb(verbWord.tag, v)
                             
                             v.save() 

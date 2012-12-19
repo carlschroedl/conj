@@ -23,7 +23,13 @@ class Verb(models.Model):
     irregular = models.BooleanField(default=False)
     #frequency
     frequent = models.BooleanField(default=False)
-    
+    #person
+    firstPerson = models.BooleanField(default=False)
+    secondPerson = models.BooleanField(default=False)
+    thirdPerson = models.BooleanField(default=False)
+    #plurality
+    singular = models.BooleanField(default=False)
+    plural = models.BooleanField(default=False)
     def __unicode__(self):
         return self.token
     
