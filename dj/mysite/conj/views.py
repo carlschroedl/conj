@@ -10,10 +10,17 @@ def index(request):
 
 # view for ajax requests
 def exercise(request):
-	if request.is_ajax():
-		if request.method == 'GET':
-			# get random exercise from database			
-			exercise = Exercise.objects.order_by('?')[0]
+    output = "" # a blank response if request isn't ajax&GET
+    if request.is_ajax():
+        if request.method == 'GET':
+            # get random exercise from database            
+            exercise = Exercise.objects.order_by('?')[0]
 
-			output = serializers.serialize('json', [exercise], use_natural_keys=True)
-	return HttpResponse(output)
+            output = serializers.serialize('json', [exercise], use_natural_keys=True)
+       
+    #the following is the official json content-type:
+    #http://stackoverflow.com/questions/477816/the-right-json-content-type
+    return HttpResponse(output, content_type='application/json')
+    #return HttpResponse(output, content_type='text/plain; charset=ISO-8859-1')
+    #return HttpResponse(output, content_type='text/plain; charset=utf-8')
+
