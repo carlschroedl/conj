@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="success" class="alert alert-success hide" data-alert="alert">
+	<button type="button" class="close" data-dismiss="alert">×</button>
+	Congratulations! That is correct.
+</div>
+<div id="failure" class="alert alert-error hide" data-alert="alert">
+	<button type="button" class="close" data-dismiss="alert">×</button>
+	Uh-oh that isn't correct.
+</div>
+<div id="sentence">
+	<div class="sentence">
+		<!-- ko foreach: leftHalf -->
+            <span class="sentence word" 
+            data-bind="text: $data"></span>                        
+        <!-- /ko -->
+        <span class="sentence verb">
+            <input type="text" id="verb" />
+            <label for="verb"
+            data-bind="text: verb().lemma()"></label>
+        </span>
+        <!-- ko foreach: rightHalf -->
+            <span class="sentence word"
+            data-bind="text: $data"></span>                        
+        <!-- /ko -->
+	</div>
+</div>
+<div class="buttons">
+	<button type="submit" class="btn btn-primary" id="check">Check</button>
+	<button type="submit" class="btn btn-primary" id="post">Post</button>
+	<button type="submit" class="btn">Clear</button>
+</div>
+{% endblock %}
