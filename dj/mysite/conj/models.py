@@ -1,6 +1,7 @@
 from django.db import models
-
-# Create your models here.
+#@note If you change the names of Verb's existing attributes you will need to 
+#change dictionary key names in  _esLang.py or create a mapping between the 
+#names of the model attributes and the corresponding _esLang.py-specific keys.
 class Verb(models.Model):
     token = models.CharField(max_length=50)
     lemma = models.CharField(max_length=50)
@@ -13,12 +14,12 @@ class Verb(models.Model):
     gerund = models.BooleanField(default=False)
     infinitive = models.BooleanField(default=False)
     participle = models.BooleanField(default=False)
-    future = models.BooleanField(default=False)
     #tenses
     present = models.BooleanField(default=False)
     preterite = models.BooleanField(default=False)
     imperfect = models.BooleanField(default=False)
     conditional = models.BooleanField(default=False)
+    future = models.BooleanField(default=False) 
     #pattern
     irregular = models.BooleanField(default=False)
     #frequency

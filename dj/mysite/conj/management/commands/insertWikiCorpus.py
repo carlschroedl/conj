@@ -108,6 +108,25 @@ class Command(BaseCommand):
     
     #<correct missing root node>
     def handle(self, *args, **options): 
+#        #######################################
+#        # <testing for regularlyConjugateVerb>
+#        ######################################
+#        vb = Verb()
+#
+#        vb.lemma = 'cocinar'
+#        #mood
+#        vb.indicative = True
+#        #tense
+#        vb.present=  True
+#        #person
+#        vb.secondPerson = True
+#        #plurality
+#        vb.plural = True
+#        print lang.regularlyConjugateVerb(vb)
+#        exit()
+#        ##################################
+#        # </testing>
+#        ##################################
         if 0 == len(args):
             print "No file name specified"
             return
