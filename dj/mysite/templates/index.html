@@ -21,9 +21,12 @@
 		$(document).ready(function() {
 			$("#check").click(function() {
 				$.get("/exercise/", function(data) {
-				        alert(data);
+					$("#success").fadeIn();
+				    console.log(data);
+				        
 				});
 			});
+			
 		});
 	</script>
   </head>
@@ -50,10 +53,10 @@
 	</div>
 
 	<div class="container">
-		<div class="alert alert-success">
+		<div id="success" class="alert alert-success hide" data-alert="alert">
 		<button type="button" class="close" data-dismiss="alert">×</button>
 		Congratulations! That is correct.</div>
-		<div class="alert alert-error">
+		<div id="failure" class="alert alert-error hide" data-alert="alert">
 		<button type="button" class="close" data-dismiss="alert">×</button>
 		Uh-oh that isn't correct.</div>
 		<div id="sentence">
