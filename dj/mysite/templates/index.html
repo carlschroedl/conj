@@ -16,6 +16,16 @@
 	<!--[if lt IE 9]>
 	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script>
+		$(document).ready(function() {
+			$("#check").click(function() {
+				$.get("/exercise/", function(data) {
+				        alert(data);
+				});
+			});
+		});
+	</script>
   </head>
 
   <body>
@@ -50,14 +60,14 @@
 			<div class="sentence">{{ sentence|safe }}</div>
 		</div>
 		<div class="buttons">
-			<button type="submit" class="btn btn-primary">Check</button>
+			<button type="submit" class="btn btn-primary" id="check">Check</button>
 			<button type="submit" class="btn">Clear</button>
 		</div>
 
 	</div> <!-- /container -->
 
 	<!-- Placed at the end of the document so the pages load faster -->
+	
 	<script src="/static/js/bootstrap.min.js"></script>
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
   </body>
 </html>

@@ -1,24 +1,25 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
+from django.utils import simplejson
+
 from conj.models import *
 
-def createInput(lemma):
-	return ('<span class="sentence verb"><input type="text" id="verb" /><label for="verb">%s</label></span>') % lemma
-
+# just render the template
 def index(request):
-    exercise = Exercise.objects.get(id=1)
-    sentenceObj = exercise.sentence
-    sentence = sentenceObj.text
-    verb = exercise.verb
-    verbPosition = exercise.verbPosition
-    output = ''
-    for i, word in enumerate(sentence.split()):
-    	if (i == verbPosition):
-    		output += createInput(verb.lemma)
-    	else:
-    		output += word + ' '
-    output += verb.token
-    return render_to_response('index.html', {'sentence': output})
+    return render_to_response('index.html')
 
+# view for ajax requests
 def exercise(request):
-    return HttpResponse("Hello, world. You're trying to access a specific exercise")
+	if request.is_ajax():
+		if request.method == 'GET':
+			# get data from database
+			exercise = Exercise.objects.get(id=1)
+			sentenceObj = exercise.sentence
+			sentence = sentenceObj.text
+			verb = exercise.verb
+			verbLocation = exercise.verbLocation
+			# put data in a dictionary
+			exerciseData = {'sentence': str(sentence), 'verb': str(verb), 'lemma' : str(verb.lemma)}
+			# dump the data into json
+			message = simplejson.dumps(exerciseData)
+	return HttpResponse(message)
