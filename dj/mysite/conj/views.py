@@ -4,9 +4,9 @@ from django.core import serializers
 
 from conj.models import *
 
-# just render the template
+# view for conjugate page
 def index(request):
-    return render_to_response('index.html')
+    return render_to_response('conjugate.html')
 
 # view for ajax requests
 def exercise(request):
@@ -17,3 +17,7 @@ def exercise(request):
 
 			output = serializers.serialize('json', [exercise], use_natural_keys=True)
 	return HttpResponse(output)
+	
+# view for about page
+def about(request):
+    return render_to_response('about.html')
