@@ -31,6 +31,14 @@ class Verb(models.Model):
     #plurality
     singular = models.BooleanField(default=False)
     plural = models.BooleanField(default=False)
+    
+    def natural_key(self):
+        return (self.token, self.lemma, self.rawTag, self.indicative, self.subjunctive,
+                self.imperative, self.gerund, self.infinitive, self.participle, 
+                self.present, self.preterite, self.imperfect, self.conditional,
+                self.future, self.irregular, self.frequent, self.firstPerson,
+                self.secondPerson, self.thirdPerson, self.singular, self.plural)
+        
     def __unicode__(self):
         return self.token
     
@@ -41,12 +49,18 @@ class Document(models.Model):
     processed = models.IntegerField()
     dbindex = models.IntegerField()
     
+    def natural_key(self):
+        return (self.parseId, self.title, self.nonfiltered, self.processed, self.dbindex)
+    
     def __unicode__(self):
         return str(self.title)
     
 class Sentence(models.Model):
     document = models.ForeignKey(Document)
     text = models.TextField()
+    
+    def natural_key(self):
+        return (self.text,) + self.document.natural_key()
     
     def __unicode__(self):
         return self.text

@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
-from django.utils import simplejson
+from django.core import serializers
 
 from conj.models import *
 
@@ -12,14 +12,8 @@ def index(request):
 def exercise(request):
 	if request.is_ajax():
 		if request.method == 'GET':
-			# get data from database
-			exercise = Exercise.objects.get(id=1)
-			sentenceObj = exercise.sentence
-			sentence = sentenceObj.text
-			verb = exercise.verb
-			verbLocation = exercise.verbLocation
-			# put data in a dictionary
-			exerciseData = {'sentence': str(sentence), 'verb': str(verb), 'lemma' : str(verb.lemma)}
-			# dump the data into json
-			message = simplejson.dumps(exerciseData)
-	return HttpResponse(message)
+			# get random exercise from database			
+			exercise = Exercise.objects.order_by('?')[0]
+
+			output = serializers.serialize('json', [exercise], use_natural_keys=True)
+	return HttpResponse(output)
