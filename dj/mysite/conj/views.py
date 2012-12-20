@@ -18,13 +18,7 @@ def exercise(request):
         if request.method == 'GET':
             # get random exercise from database            
             exercise = Exercise.objects.order_by('?')[0]
-            
-            
-
             output = serializers.serialize('json', [exercise], use_natural_keys=True, ensure_ascii=False)
-            
-            with codecs.open('output.txt', 'w', 'utf-8') as o:
-                o.write((output))
 
         if request.method == 'POST':
             exercise = Exercise.objects.get(id=request.POST['pk'])
