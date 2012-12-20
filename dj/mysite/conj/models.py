@@ -33,11 +33,16 @@ class Verb(models.Model):
     plural = models.BooleanField(default=False)
     
     def natural_key(self):
-        return (self.token, self.lemma, self.rawTag, self.indicative, self.subjunctive,
-                self.imperative, self.gerund, self.infinitive, self.participle, 
-                self.present, self.preterite, self.imperfect, self.conditional,
-                self.future, self.irregular, self.frequent, self.firstPerson,
-                self.secondPerson, self.thirdPerson, self.singular, self.plural)
+        return {'token': self.token, 'lemma': self.lemma, 'rawTag': self.rawTag, 
+                'indicative': self.indicative, 'subjunctive': self.subjunctive,
+                'imperative': self.imperative, 'gerund': self.gerund, 
+                'infinitive': self.infinitive, 'particple': self.participle, 
+                'present': self.present, 'preterite': self.preterite, 
+                'imperfect': self.imperfect, 'conditional': self.conditional,
+                'future': self.future, 'irregular': self.irregular, 
+                'frequent': self.frequent, 'firstPerson': self.firstPerson,
+                'secondPerson': self.secondPerson, 'thirdPerson': self.thirdPerson, 
+                'singular': self.singular, 'plural': self.plural}
         
     def __unicode__(self):
         return self.token
@@ -50,7 +55,8 @@ class Document(models.Model):
     dbindex = models.IntegerField()
     
     def natural_key(self):
-        return (self.parseId, self.title, self.nonfiltered, self.processed, self.dbindex)
+        return {'parseId': self.parseId, 'title': self.title, 'nonfiltered': self.nonfiltered, 
+                'processed': self.processed, 'dbindex': self.dbindex}
     
     def __unicode__(self):
         return str(self.title)
@@ -60,7 +66,9 @@ class Sentence(models.Model):
     text = models.TextField()
     
     def natural_key(self):
-        return (self.text,) + self.document.natural_key()
+    	d = {'text': self.text,}
+    	d.update(self.document.natural_key())
+        return d
     
     def __unicode__(self):
         return self.text
