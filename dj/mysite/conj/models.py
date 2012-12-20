@@ -36,7 +36,7 @@ class Verb(models.Model):
         return {'token': self.token, 'lemma': self.lemma, 'rawTag': self.rawTag, 
                 'indicative': self.indicative, 'subjunctive': self.subjunctive,
                 'imperative': self.imperative, 'gerund': self.gerund, 
-                'infinitive': self.infinitive, 'particple': self.participle, 
+                'infinitive': self.infinitive, 'participle': self.participle, 
                 'present': self.present, 'preterite': self.preterite, 
                 'imperfect': self.imperfect, 'conditional': self.conditional,
                 'future': self.future, 'irregular': self.irregular, 
