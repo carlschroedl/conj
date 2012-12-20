@@ -1,1 +1,1 @@
-../../freq/output.pkl
+../../freq/freq.pkl

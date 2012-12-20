@@ -135,8 +135,6 @@ class Command(BaseCommand):
         if 2 == len(args):
             freqDictFile = open(args[1])
             freqDict = cPickle.load(freqDictFile)
-            pprint.pprint(freqDict)
-            exit()
         else:
             freqDict = {}
         file = codecs.open(filename, 'r', pcfg.ENCODING)
@@ -235,6 +233,8 @@ class Command(BaseCommand):
                             v.rawTag = verbWord.tag
                             if v.lemma in freqDict:
                                 v.frequent = True
+                            else:
+                                print "not frequent:", v.lemma
                             v = self.getTaggedVerb(verbWord.tag, v)
                             
                             v.save() 
