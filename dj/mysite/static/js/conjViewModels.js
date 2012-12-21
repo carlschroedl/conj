@@ -89,6 +89,9 @@ var Exercise = function() {
     self.flagCount = ko.observable();
 
     self.userWasCorrect = ko.observable(); //boolean
+    self.userWasWrong = ko.computed(function(){
+        return self.userWasCorrect() != undefined && !self.userWasCorrect();
+    });
     self.userAnswer = ko.observable();  //text supplied by user
 
     //don't attempt to modify these arrays directly, use
@@ -132,52 +135,109 @@ var Exercise = function() {
             });
         }
     });
-    
-    self.pronounInfo = ko.computed(function() {
+
+    //<info functions> @todo eliminate repetition
+    self.personInfo = ko.computed(function(){
+        var person = ''
         if('undefined' != typeof self.verb()){
-        var person = '';
-        var number = '';
-        //map verb property name to displayed text
-        //currently these are very similar, but could be changed
-        var personMap = {
-            firstPerson: 'first person',
-            secondPerson: 'second person',
-            thirdPerson: 'third person',
-        };
-        //set 'person' according to the properties in self.verb()
-        for (prop in personMap) {
-            if (self.verb()[prop]()) {
-                person = personMap[prop];
-            }
+            //map verb property name to displayed text
+            var personMap = {
+                firstPerson: 'first person',
+                secondPerson: 'second person',
+                thirdPerson: 'third person',
+            };
+            //set 'person' according to the properties in self.verb()
+            for (prop in personMap) {
+                if (self.verb()[prop]()) {
+                    person = personMap[prop];
+                    break;
+                }
+            }   
         }
-        //map verb property name to displayed text        
-        var numberMap = {
-            singular: 'singular',
-            plural: 'plural'
-        };
-        //set 'number' according to the properties in self.verb()
-        for (prop in numberMap) {
-            if (self.verb()[prop]()) {
-                number = numberMap[prop];
-            }
+        return person;
+    });
+    self.pluralityInfo = ko.computed(function(){
+        var plurality = ''
+        if('undefined' != typeof self.verb()){
+            //map property name to displayed text
+            var pluralityMap = {
+                singular: 'singular',
+                plural: 'plural'
+            };
+            //set return value according to the properties in self.verb()
+            for (prop in pluralityMap) {
+                if (self.verb()[prop]()) {
+                    plurality = pluralityMap[prop];
+                    break;
+                }
+            }   
         }
-    return "(" + person + " " + number + ")";        
-    }
+        return plurality;
+    });
+    self.moodInfo = ko.computed(function(){
+        var mood = ''
+        if('undefined' != typeof self.verb()){
+            //map property name to displayed text
+            var moodMap = {
+                'indicative': 'indicative',
+                'subjunctive': 'subjunctive',
+                'imperative': 'imperative',
+                'gerund': 'gerund',
+                'infinitive': 'infinitive',
+                'participle': 'participle'
+            };
+            //set return value according to the properties in self.verb()
+            for (prop in moodMap) {
+                if (self.verb()[prop]()) {
+                    mood = moodMap[prop];
+                    break;
+                }
+            }   
+        }
+        return mood;
+    });
+    self.tenseInfo = ko.computed(function(){
+        var tense = ''
+        if('undefined' != typeof self.verb()){
+            //map property name to displayed text
+            var tenseMap = {
+                'present': 'present',
+                'preterite': 'preterite',
+                'imperfect': 'imperfect',
+                'conditional': 'conditional',
+                'future': 'future'
+            };
+            //set return value according to the properties in self.verb()
+            for (prop in tenseMap) {
+                if (self.verb()[prop]()) {
+                    tense = tenseMap[prop];
+                    break;
+                }
+            }   
+        }
+        return tense;
     });
 
+    //</info functions>
     self.loadData = function(data) {
         loadData(data, self);
     };
     
     self.checkAnswer = function(){
-       if(self.userAnswer() === self.verb().token()){
+       if('undefined' !== typeof self.userAnswer()){
+        
+       if(self.userAnswer().toLowerCase() === self.verb().token().toLowerCase()){
            self.userWasCorrect(true);
        }
        else{
            self.userWasCorrect(false);
        }
+       }
     }
     self.getNewExercise = function(){
+        //@todo convert this into a post that send data to the server
+        self.userWasCorrect(undefined);
+        self.userAnswer(undefined);
         $.get("/exercise/", function(data) {
             data = data[0]
             //$("#success").fadeIn();
@@ -185,7 +245,8 @@ var Exercise = function() {
             //shuffle the data around into the right spots
             var exerciseData = data.fields;
             exerciseData.id = data.pk;
-            //<@todo simplify> this can be done with the knockout mapping plugin
+            
+            //<simplify> @todo this can be done with the knockout mapping plugin
             sentenceData = exerciseData.sentence;
             verbData = exerciseData.verb;
             var s = new Sentence();
@@ -195,7 +256,8 @@ var Exercise = function() {
             //overwrite 
             exerciseData.sentence = s;
             exerciseData.verb = v;
-            //<@todo simplify> this can be done with the knockout mapping plugin
+            //</simplify
+            
             sentenceData = exerciseData.sentence;
             self.loadData(exerciseData);
         });

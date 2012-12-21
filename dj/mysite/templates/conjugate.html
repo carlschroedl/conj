@@ -6,19 +6,20 @@
     <script>
         $(document).ready(function(){
             ex = new Exercise();
+            ex.getNewExercise();
             ko.applyBindings(ex);
         });
     </script>
 {% endblock scripts %}
 
 {% block content %}
-<div id="success" class="alert alert-success hide" data-alert="alert"
-     data-bind="visible: true === userWasCorrect()">
+<div id="success" class="alert alert-success" data-alert="alert"
+     data-bind="visible: userWasCorrect">
     <button type="button" class="close" data-dismiss="alert">×</button>
     Congratulations! That is correct.
 </div>
-<div id="failure" class="alert alert-error hide" data-alert="alert"
-    data-bind="visible: false === userWasCorrect()">
+<div id="failure" class="alert alert-error" data-alert="alert"
+    data-bind="visible: userWasWrong">
     <button type="button" class="close" data-dismiss="alert">×</button>
     Uh-oh that isn't correct.
 </div>
@@ -29,11 +30,20 @@
             data-bind="text: $data"></span>                        
         <!-- /ko -->
         <span class="sentence verb">
-            <input type="text" id="verb" data-bind="value: userAnswer"/>
+            <input tabindex="0" type="text" id="verb" data-bind="value: userAnswer"/>
             <label for="verb">
-                        <span 
+                        <span class="verbLemma"
                         data-bind="text: verb().lemma()"></span>
-                        <span data-bind="text: pronounInfo()"></span>
+                        (
+                        <span class="moodInfo" 
+                        data-bind="text: moodInfo"></span>
+                        <span class="tenseInfo" 
+                        data-bind="text: tenseInfo"></span>
+                        <span class="personInfo" 
+                        data-bind="text: personInfo"></span>
+                        <span class="pluralityInfo" 
+                        data-bind="text: pluralityInfo"></span>
+                        )
             </label>
         </span>
         <!-- ko foreach: rightHalf -->
@@ -44,9 +54,9 @@
 </div>
 <div class="buttons">
     <button type="submit" class="btn btn-primary" id="check" data-bind="
-    click: checkAnswer">Check</button>
+    click: checkAnswer">Check Answer</button>
     <button type="submit" class="btn btn-primary" id="post" data-bind="
-    click: getNewExercise">Post</button>
+    click: getNewExercise">Get New Exercise</button>
     <button type="submit" class="btn">Clear</button>
 </div>
 {% endblock %}
