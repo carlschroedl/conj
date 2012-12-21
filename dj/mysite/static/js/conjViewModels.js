@@ -46,23 +46,34 @@ var Verb = function() {
     self.lemma = ko.observable()
     self.rawTag = ko.observable();
     //moods
+    self.indicative = ko.observable();
     self.subjunctive = ko.observable();
     self.imperative = ko.observable();
-    self.indicative = ko.observable();
     self.gerund = ko.observable();
     self.infinitive = ko.observable();
-    self.perfect = ko.observable();
+    self.participle = ko.observable();
     //tenses
     self.present = ko.observable();
     self.preterite = ko.observable();
     self.imperfect = ko.observable();
     self.conditional = ko.observable();
+    self.future = ko.observable();
     //conjugation pattern
     self.irregular = ko.observable();
-    //meta-tense:
-    //self.preteriteOrImperfect = ko.observable();
-    //meta-mood
-    //self.indicativeOrSubjunctive = ko.observable();
+    //frequency
+    self.frequent = ko.observable();
+    //person
+    self.firstPerson = ko.observable();
+    self.secondPerson = ko.observable();
+    self.thirdPerson = ko.observable();
+    //plurality
+    self.singular = ko.observable();
+    self.plural = ko.observable();
+
+
+
+
+
     self.loadData = function(data) {
         loadData(data, self);
     };
@@ -73,15 +84,22 @@ var Exercise = function() {
     var self = this;
     self.id = ko.observable();
     self.verbLocation = ko.observable();
-    self.sentence = ko.observable();
-    self.verb = ko.observable();
+    self.sentence = ko.observable(new Sentence());
+    self.verb = ko.observable(new Verb());
+    self.flagCount = ko.observable();
+
+    self.userWasCorrect = ko.observable(); //boolean
+    self.userAnswer = ko.observable();  //text supplied by user
+
     //don't attempt to modify these arrays directly, use
     //their corresponding mutators below
     self.leftHalf = ko.observableArray();
     self.rightHalf = ko.observableArray();
 
     self.updateLeftHalf = ko.computed(function() {
-        if ('undefined' != typeof self.sentence() && 'undefined' != typeof self.verbLocation()) {
+        if ( 'undefined' != typeof self.sentence() &&
+             'undefined' != typeof self.verbLocation() &&
+             'undefined' != typeof self.sentence().text()) {
             var verbLoc = self.verbLocation();
             if (verbLoc != 0) {
                 verbLoc -= 1;
@@ -99,7 +117,9 @@ var Exercise = function() {
     });
 
     self.updateRightHalf = ko.computed(function() {
-        if ('undefined' != typeof self.sentence() && 'undefined' != typeof self.verbLocation()) {
+        if ( 'undefined' != typeof self.sentence() &&
+             'undefined' != typeof self.verbLocation() &&
+             'undefined' != typeof self.sentence().text()) {
             var verbEndLoc = self.verbLocation() + self.verb().token().length + 1;
             //+1 for the space following the verb
             var rightText = self.sentence().text().slice(verbEndLoc);
@@ -112,10 +132,75 @@ var Exercise = function() {
             });
         }
     });
+    
+    self.pronounInfo = ko.computed(function() {
+        if('undefined' != typeof self.verb()){
+        var person = '';
+        var number = '';
+        //map verb property name to displayed text
+        //currently these are very similar, but could be changed
+        var personMap = {
+            firstPerson: 'first person',
+            secondPerson: 'second person',
+            thirdPerson: 'third person',
+        };
+        //set 'person' according to the properties in self.verb()
+        for (prop in personMap) {
+            if (self.verb()[prop]()) {
+                person = personMap[prop];
+            }
+        }
+        //map verb property name to displayed text        
+        var numberMap = {
+            singular: 'singular',
+            plural: 'plural'
+        };
+        //set 'number' according to the properties in self.verb()
+        for (prop in numberMap) {
+            if (self.verb()[prop]()) {
+                number = numberMap[prop];
+            }
+        }
+    return "(" + person + " " + number + ")";        
+    }
+    });
 
     self.loadData = function(data) {
         loadData(data, self);
     };
+    
+    self.checkAnswer = function(){
+       if(self.userAnswer() === self.verb().token()){
+           self.userWasCorrect(true);
+       }
+       else{
+           self.userWasCorrect(false);
+       }
+    }
+    self.getNewExercise = function(){
+        $.get("/exercise/", function(data) {
+            data = data[0]
+            //$("#success").fadeIn();
+            console.dir(data);
+            //shuffle the data around into the right spots
+            var exerciseData = data.fields;
+            exerciseData.id = data.pk;
+            //<@todo simplify> this can be done with the knockout mapping plugin
+            sentenceData = exerciseData.sentence;
+            verbData = exerciseData.verb;
+            var s = new Sentence();
+            s.loadData(sentenceData);
+            var v = new Verb();
+            v.loadData(verbData);
+            //overwrite 
+            exerciseData.sentence = s;
+            exerciseData.verb = v;
+            //<@todo simplify> this can be done with the knockout mapping plugin
+            sentenceData = exerciseData.sentence;
+            self.loadData(exerciseData);
+        });
+    };
+    
 };
 
 //</view models>
@@ -123,7 +208,8 @@ var Exercise = function() {
 //normally the ajax calls will provide the arguments for the loadData calls.
 //use literals here for simplicity
 //use the same document for all tests; none of the doc stuff is displayed
-var d = new Document();
+
+//var d = new Document();
 
 
 /* <test1>
@@ -157,7 +243,7 @@ x1.loadData({
 ko.applyBindings(x1);
 //</test1> */
 
-//* <test2>
+/* <test2>
 //tests verb at the very front of the sentence
 var v2 = new Verb();
 
@@ -219,4 +305,4 @@ ko.applyBindings(x3);
 //</test3> */
 
 
-//</temporary viewModel tests>​​
+//</temporary viewModel tests>

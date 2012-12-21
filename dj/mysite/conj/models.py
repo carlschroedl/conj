@@ -57,10 +57,10 @@ class Sentence(models.Model):
     text = models.TextField()
     
     def natural_key(self):
-    	d = {'text': self.text,}
-    	d.update(self.document.natural_key())
-        return d
-    
+        ret = getAllAttributes(self)
+        ret['document'] = self.document.natural_key()
+        return ret
+
     def __unicode__(self):
         return self.text
 

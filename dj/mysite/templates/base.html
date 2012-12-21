@@ -1,83 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-	<meta charset="utf-8">
-	<title>CS 545</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="">
-	<meta name="author" content="">
+    <meta charset="utf-8">
+    <title>CS 545</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-	<!-- Le styles -->
-	<link href="/static/css/bootstrap.min.css" rel="stylesheet">
-	<link href="/static/css/styles.css" rel="stylesheet" media="screen">
-	<link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <!-- Le styles -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet" media="screen">
+    <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
 
-	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-	<!--[if lt IE 9]>
-	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
-	<script>
-		$(document).ready(function() {
-			$("#check").click(function() {
-				$.get("/exercise/", function(data) {
-					$("#success").fadeIn();
-				    console.log(data);
-				        
-				});
-			});
-			$("#post").click(function() {
-				$.post("/exercise/", {
-			        pk : 1,
-			    },  function(data) {
-			           console.log(data);
-			        });
-			});
-		});
-		function csrfSafeMethod(method) {
-		    // these HTTP methods do not require CSRF protection
-		    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-		}
-		$.ajaxSetup({
-		    crossDomain: false, // obviates need for sameOrigin test
-		    beforeSend: function(xhr, settings) {
-		        if (!csrfSafeMethod(settings.type)) {
-		            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-		        }
-		    }
-		});
-		function getCookie(name) {
-		    var cookieValue = null;
-		    if (document.cookie && document.cookie != '') {
-		        var cookies = document.cookie.split(';');
-		        for (var i = 0; i < cookies.length; i++) {
-		            var cookie = jQuery.trim(cookies[i]);
-		            // Does this cookie string begin with the name we want?
-		            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-		                break;
-		            }
-		        }
-		    }
-		    return cookieValue;
-		}
-		var csrftoken = getCookie('csrftoken');
-	</script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    {% block scripts %}
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="/static/js/knockout-2.2.0.js"></script>
+    <script>
+        $(document).ready(function() {
+           /* these are taken care of by knockout now
+            $("#check").click(function() {
+                $.get("/exercise/", function(data) {
+                    $("#success").fadeIn();
+                    console.log(data);
+                        
+                });
+            });
+            $("#post").click(function() {
+                $.post("/exercise/", {
+                    pk : 1,
+                },  function(data) {
+                       console.log(data);
+                    });
+            });
+            */
+        });
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+    </script>
+    {% endblock scripts %}
   </head>
 
   <body>
 
-	<div class="navbar navbar-inverse navbar-fixed-top">
-	  {% include "nav.html" %}
-	</div>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      {% include "nav.html" %}
+    </div>
 
-	<div class="container">
-		{% block content %}{% endblock %}
-	</div> <!-- /container -->
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div> <!-- /container -->
 
-	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="/static/js/knockout-2.2.0.js"></script>
-	<script src="/static/js/conjViewModels.js"></script>
-	<script src="/static/js/bootstrap.min.js"></script>
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/js/knockout-2.2.0.js"></script>
+    <script src="/static/js/conjViewModels.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
   </body>
 </html>
