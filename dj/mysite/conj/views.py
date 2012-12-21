@@ -23,7 +23,7 @@ def exercise(request):
         if request.method == 'POST':
             exercise = Exercise.objects.get(id=request.POST['pk'])
 
-            output = serializers.serialize('json', [exercise], use_natural_keys=True)
+            output = serializers.serialize('json', [exercise], use_natural_keys=True, ensure_ascii=False)
     #the following is the official json content-type:
     #http://stackoverflow.com/questions/477816/the-right-json-content-type
     return HttpResponse(output, content_type='application/json')

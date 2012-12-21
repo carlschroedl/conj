@@ -13,23 +13,23 @@
 {% endblock scripts %}
 
 {% block content %}
-<div id="success" class="alert alert-success" data-alert="alert"
-     data-bind="visible: userWasCorrect">
-    <button type="button" class="close" data-dismiss="alert">×</button>
-    Congratulations! That is correct.
-</div>
-<div id="failure" class="alert alert-error" data-alert="alert"
-    data-bind="visible: userWasWrong">
-    <button type="button" class="close" data-dismiss="alert">×</button>
-    Uh-oh that isn't correct.
+<div id="feedback">
+	<div id="success" class="alert alert-success" data-alert="alert"
+	     data-bind="visible: userWasCorrect">
+	    Congratulations! That is correct.
+	</div>
+	<div id="failure" class="alert alert-error" data-alert="alert"
+	    data-bind="visible: userWasWrong">
+	    Uh-oh that isn't correct.
+	</div>
 </div>
 <div id="sentence">
     <div class="sentence">
         <!-- ko foreach: leftHalf -->
-            <span class="sentence word" 
+            <span class="word" 
             data-bind="text: $data"></span>                        
         <!-- /ko -->
-        <span class="sentence verb">
+        <span class="verb">
             <input tabindex="1" type="text" id="verb" 
             data-bind="value: userAnswer, hasfocus: startExercise"/>
             <label for="verb">
@@ -60,6 +60,5 @@
     click: checkAnswer">Check Answer</button>
     <button tabindex="3" type="submit" class="btn btn-primary" id="post" data-bind="
     click: getNewExercise, hasfocus: userWasCorrect()">Get New Exercise</button>
-    <button type="submit" class="btn">Clear (What does this button do?)</button>
 </div>
 {% endblock %}
