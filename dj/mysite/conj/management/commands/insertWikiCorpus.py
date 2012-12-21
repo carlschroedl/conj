@@ -63,7 +63,7 @@ class Command(BaseCommand):
                     'G' : 'gerund',
                     'N' : 'infinitive',
                     'P' : 'participle',
-                    'M' : 'subjunctive'
+                    'M' : 'imperative'
         }
         attribToSet = twoMap.get(tag[2], False)
         if False == attribToSet:
@@ -101,9 +101,33 @@ class Command(BaseCommand):
         attribToSet = fiveMap.get(tag[5], False)
         if False != attribToSet:
             setattr(verb, attribToSet, True)
-
+        
+        verb.masculine = ('M' == tag[6])
+        
         return verb
-    
+    #conjugates the verb lemma for the given context as though it were a 
+    #regular verb. Compares the regularly-conjugated result to the actual token
+    #the verb's actual token
+    def isRegular(self, verb):
+        actual = verb.token.lower()
+        if hasattr(lang, 'regularlyConjugateVerb'):
+            conjugated = lang.regularlyConjugateVerb(verb)
+            
+            #first check tuple results
+            #if ( (verb.subjunctive and verb.imperfect) or 
+            #      verb.participle or
+            #      verb.imperative):
+            
+            #first check tuple results
+            if isinstance(conjugated, tuple):
+                return actual == conjugated[0] or actual == conjugated[1]
+            else:
+                #if result was not a tuple
+                return actual == conjugated
+        else:
+            print "no regular conjugation functionality available"
+            return False
+
     #</parse helper functions>
     
     #<correct missing root node>
@@ -113,15 +137,20 @@ class Command(BaseCommand):
 #        ######################################
 #        vb = Verb()
 #
-#        vb.lemma = 'cocinar'
+#        vb.lemma = 'compartir'
 #        #mood
-#        vb.indicative = True
+#        vb.participle = True
 #        #tense
-#        vb.present=  True
+#        vb.present = False
 #        #person
 #        vb.secondPerson = True
 #        #plurality
 #        vb.plural = True
+#        #affirmitave
+#        vb.affirmative = False
+#        #gender
+#        vb.masculine = True
+#
 #        print lang.regularlyConjugateVerb(vb)
 #        exit()
 #        ##################################
@@ -236,7 +265,7 @@ class Command(BaseCommand):
                             else:
                                 print "not frequent:", v.lemma
                             v = self.getTaggedVerb(verbWord.tag, v)
-                            
+                            v.irregular = not self.isRegular(v) 
                             v.save() 
                             pp(v)
                             #@todo flush v to db

@@ -358,7 +358,48 @@ verbEndings={
                 }
             }
         }#</imperfect>
-    }#</subjunctive>
+    },#</subjunctive>
+    'imperative': {
+        'ar' : {
+            'firstPerson' : {
+                'plural' :  'emos'
+            },
+            'secondPerson' : {
+                'singular' : 'a',
+                'plural'   : 'ad'
+            },
+            'thirdPerson' : {
+                'singular': 'e',
+                'plural'  : 'en'
+            }
+        },
+        'er' : {
+            'firstPerson' : {
+                'plural' :  'amos'
+            },
+            'secondPerson' : {
+                'singular' : 'e',
+                'plural'   : 'ed'
+            },
+            'thirdPerson' : {
+                'singular': 'a',
+                'plural'  : 'an'
+            }
+        },
+        'ir' : {
+            'firstPerson' : {
+                'plural' :  'amos'
+            },
+            'secondPerson' : {
+                'singular' : 'e',
+                'plural'   : 'id'
+            },
+            'thirdPerson' : {
+                'singular': 'a',
+                'plural'  : 'an'
+            }
+        }
+    }
 }
 
 #given a string verb lemma, return its string stem, or False if it is not a verb
@@ -432,7 +473,25 @@ def getVerbCategory(lemma):
 #   None returns both masculine and feminine as a tuple. The other values return
 #   just a string.
 #
-def regularlyConjugate(lemma, mood, tense='', person='', plurality='', formal=False, subjStyle=None, gender=None):
+#@param Boolean affirmative. Only relevant when mood = 'imperative'.
+#   possible values: [True, False, None]
+#   True returns the affirmative command
+#   False returns the negative command
+#   None returns both in a (affirmative, negative) tuple
+#
+#@returns mixed
+#   - a string conjugated verb
+#   - a tuple of string conjugations if any of the following conditions are met:
+#           - requested subjunctive mood and imperfect tense with no value 
+#             specified for the 'conjStyle' parameter
+#           - requested participle mood and no value was specified for the 
+#             'gender' parameter
+#           - requested imperative mood and no value was specified for the 
+#             'affirmative' parameter
+#   - False if the supplied lemma is not an infinitive verb or 
+#     if the future subjunctive is requested. (Future subjunctive not supported)
+#
+def regularlyConjugate(lemma, mood, tense='', person='', plurality='', formal=False, subjStyle=None, gender=None, affirmative=None):
 
     if 'infinitive' == mood:
         return lemma
@@ -443,9 +502,11 @@ def regularlyConjugate(lemma, mood, tense='', person='', plurality='', formal=Fa
         cat = getVerbCategory(lemma) #ar/er/ir
         verbStem = getVerbStem(lemma)
         if False == verbStem:
-            raise Exception('"%s" does not appear to be an infinitive verb' % lemma)
+            print ('"%s" does not appear to be an infinitive verb' % lemma)
+            return False
         if 'indicative' == mood:
             return verbStem + verbEndings[mood][tense][cat][person][plurality]
+
         if 'subjunctive' == mood:
             if 'imperfect' == tense:
                 #imperfect subjunctive lookups always yield a two-element tuple
@@ -461,10 +522,76 @@ def regularlyConjugate(lemma, mood, tense='', person='', plurality='', formal=Fa
                     return (conj0, conj1)
             elif 'present' == tense:
                 return  verbStem + verbEndings[mood][tense][cat][person][plurality]
+            elif 'future' == tense:
+                print "Future subjunctive not supported."
+                return False 
             else:
                 raise Exception('"%s" is not a valid tense for mood "subjunctive"' % tense)
-        else:#@todo make this process other moods
-            raise Exception("Not yet implemented") 
+
+        if 'imperative' == mood:
+            if 'firstPerson' == person and 'singular' == plurality:
+                #This doesn't exist in spanish.
+                #The user really wants a tú command:
+
+                person = 'secondPerson'
+                plurality = 'singular'
+
+            aff = verbStem + verbEndings[mood][cat][person][plurality]
+            
+            #negative commands are just present subjunctive
+            neg = verbStem + verbEndings['subjunctive']['present'][cat][person][plurality]
+            if None == affirmative:
+                #return a tuple
+                return (aff, neg)
+            elif True == affirmative:
+                return aff
+            elif False == affirmative:
+                return neg
+            else:
+                raise Exception('"%s" is not a valid option. Use true, false, or None' % affirmative)
+        if 'gerund' == mood:
+            if 'ar' == cat:
+                return verbStem + 'ando'    
+            elif 'er' == cat or 'ir' == cat:
+                return verbStem + 'iendo'
+            else:
+                raise Exception("invalid verb category")
+        if 'participle' == mood:
+            ending = ''
+            if 'ar' == cat:
+                ending += 'ad'
+            elif 'er' == cat or 'ir' == cat:
+                ending += 'id'
+
+            #gender
+            if None == gender:
+                ending0 = ending + 'o'
+                ending1 = ending + 'a' 
+            elif 'masculine' == gender:
+                ending += 'o'
+            elif 'feminine' == gender:
+                ending += 'a'
+            else:
+                raise Exception("invalid gender")
+            
+            if 'singular' == plurality:
+                if None == gender:
+                    return (verbStem + ending0, verbStem + ending1)
+                else:
+                    return verbStem + ending
+            elif 'plural' == plurality:
+                if None == gender:
+                    ending0 += 's'
+                    ending1 += 's'
+                    return (verbStem + ending0, verbStem + ending1)
+                else:
+                    ending += 's'
+                    return verbStem+ending
+            else:
+                raise Exception('invalid plurality')
+
+        else:
+            raise Exception("invalid mood") 
 
 ##########################################################
 # </general-purpose Spanish verb functionality>
@@ -494,13 +621,23 @@ def regularlyConjugateVerb(v):
     personAttributeNames = ['firstPerson', 'secondPerson', 'thirdPerson']
     pluralityAttributeNames = ['singular', 'plural']
     
+    affirmative = v.affirmative
+    formal = v.formal
+
+    if v.masculine == None:
+        gender = None
+    elif(v.masculine):
+        gender = 'masculine'
+    elif False == v.masculine:
+        gender = 'feminine'
+
     mood = getFirstTrueAttribName(v, moodAttributeNames)
     tense = getFirstTrueAttribName(v, tenseAttributeNames)
     person = getFirstTrueAttribName(v, personAttributeNames)
     plurality = getFirstTrueAttribName(v, pluralityAttributeNames)
     lemma = v.lemma
     
-    return regularlyConjugate(lemma, mood, tense, person, plurality)
+    return regularlyConjugate(lemma, mood, tense, person, plurality, formal, gender=gender, affirmative=affirmative)
 
 #@param object to check
 #@param Names of attributes to check on object. This is a subset of properties
@@ -508,16 +645,13 @@ def regularlyConjugateVerb(v):
 #@param Value to compare against
 #returns The name of the attribute in object that equalled
 def getFirstAttribNameEqualTo(obj, attributeNames, value):
-    found = False
     for attributeName in attributeNames:
         if value == getattr(obj, attributeName):
             return attributeName
             #@note
             # if attribute lists are converted to dictionaries, use this instead
             # return attributeNames[attributeName]
-    if not found:
-        raise Exception("No attribute of the specified value was found in the given attributes of the object")
-
+    return None
 def getFirstTrueAttribName(obj, attributeNames):
     return getFirstAttribNameEqualTo(obj, attributeNames, True)
 

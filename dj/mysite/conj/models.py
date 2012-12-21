@@ -32,7 +32,12 @@ class Verb(models.Model):
     #plurality
     singular = models.BooleanField(default=False)
     plural = models.BooleanField(default=False)
-    
+    #affirmation
+    affirmative = models.NullBooleanField(default=None) #if False, negative cmd
+    #gender
+    masculine = models.BooleanField(default=False) #if False, feminine
+    #formality
+    formal = models.BooleanField(default=False) #if False, informal 
     def natural_key(self):
         return getAllAttributes(self)
         
