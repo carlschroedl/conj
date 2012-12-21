@@ -30,7 +30,8 @@
             data-bind="text: $data"></span>                        
         <!-- /ko -->
         <span class="sentence verb">
-            <input tabindex="0" type="text" id="verb" data-bind="value: userAnswer"/>
+            <input tabindex="1" type="text" id="verb" 
+            data-bind="value: userAnswer, hasfocus: startExercise"/>
             <label for="verb">
                         <span class="verbLemma"
                         data-bind="text: verb().lemma()"></span>
@@ -53,10 +54,10 @@
     </div>
 </div>
 <div class="buttons">
-    <button type="submit" class="btn btn-primary" id="check" data-bind="
+    <button tabindex="2" type="submit" class="btn btn-primary" id="check" data-bind="
     click: checkAnswer">Check Answer</button>
-    <button type="submit" class="btn btn-primary" id="post" data-bind="
-    click: getNewExercise">Get New Exercise</button>
-    <button type="submit" class="btn">Clear</button>
+    <button tabindex="3" type="submit" class="btn btn-primary" id="post" data-bind="
+    click: getNewExercise, hasfocus: userWasCorrect()">Get New Exercise</button>
+    <button type="submit" class="btn">Clear (What does this button do?)</button>
 </div>
 {% endblock %}

@@ -92,8 +92,10 @@ var Exercise = function() {
     self.userWasWrong = ko.computed(function(){
         return self.userWasCorrect() != undefined && !self.userWasCorrect();
     });
-    self.userAnswer = ko.observable();  //text supplied by user
+    self.startExercise = ko.observable(true);
 
+    self.userAnswer = ko.observable();  //text supplied by user
+    
     //don't attempt to modify these arrays directly, use
     //their corresponding mutators below
     self.leftHalf = ko.observableArray();
@@ -231,6 +233,7 @@ var Exercise = function() {
        }
        else{
            self.userWasCorrect(false);
+           self.startExercise(true);
        }
        }
     }
@@ -260,6 +263,7 @@ var Exercise = function() {
             
             sentenceData = exerciseData.sentence;
             self.loadData(exerciseData);
+            self.startExercise(true);
         });
     };
     
