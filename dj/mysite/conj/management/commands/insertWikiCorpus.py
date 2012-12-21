@@ -262,8 +262,6 @@ class Command(BaseCommand):
                             v.rawTag = verbWord.tag
                             if v.lemma in freqDict:
                                 v.frequent = True
-                            else:
-                                print "not frequent:", v.lemma
                             v = self.getTaggedVerb(verbWord.tag, v)
                             v.irregular = not self.isRegular(v) 
                             v.save() 
