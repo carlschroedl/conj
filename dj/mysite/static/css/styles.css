@@ -1,6 +1,9 @@
 body {padding-top: 60px;}
 .sentence {display: inline-block;}
-.verb {position: relative; top: 1.66em;}
-.verb input {width: 200px; margin:0 .25em;}
-.verb label {width: 200px; text-align: center; font-size: .66em;}
+.word, .verb {height: 4em;}
+.word {display: inline-block; vertical-align: top;}
+.verb {position: relative; display: inline-block; top: -5px;}
+.verb input {width: 250px; margin:0 .25em;}
+.verb label {width: 266px; text-align: center; font-size: .66em;}
 .buttons {margin-top:4em;}
+#feedback {height:4em;}
