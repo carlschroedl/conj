@@ -5,6 +5,8 @@ from django.core.context_processors import csrf
 
 from conj.models import *
 
+import codecs
+
 # view for conjugate page
 def index(request):
     return render_to_response('conjugate.html')
@@ -16,8 +18,7 @@ def exercise(request):
         if request.method == 'GET':
             # get random exercise from database            
             exercise = Exercise.objects.order_by('?')[0]
-
-            output = serializers.serialize('json', [exercise], use_natural_keys=True)
+            output = serializers.serialize('json', [exercise], use_natural_keys=True, ensure_ascii=False)
 
         if request.method == 'POST':
             exercise = Exercise.objects.get(id=request.POST['pk'])
