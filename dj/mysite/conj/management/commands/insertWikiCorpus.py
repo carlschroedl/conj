@@ -142,15 +142,13 @@ class Command(BaseCommand):
     #conjugates the verb lemma for the given context as though it were a 
     #regular verb. Compares the regularly-conjugated result to the actual token
     #the verb's actual token
+    #returns True on regular, False on irregular, None if the input is not verb-like
     def isRegular(self, verb):
         actual = verb.token.lower()
         if hasattr(lang, 'regularlyConjugateVerb'):
             conjugated = lang.regularlyConjugateVerb(verb)
-            
-            #first check tuple results
-            #if ( (verb.subjunctive and verb.imperfect) or 
-            #      verb.participle or
-            #      verb.imperative):
+            if False == conjugated:
+                return None
             
             #first check tuple results
             if isinstance(conjugated, tuple):
@@ -201,6 +199,8 @@ class Command(BaseCommand):
         else:
             freqDict = {}
         self.preprocess(filename)
+        
+        #<refactor into preprocess?>
         file = codecs.open(filename, 'r', pcfg.ENCODING)
         firstline = file.readline().strip()
         
@@ -223,8 +223,8 @@ class Command(BaseCommand):
             print "Finished writing to" ,filename, "."
             print filename, "will now be parsed."
         
-        #</correct missing root node>
-        
+        #</refactor into preprocess?>
+
         #<parse the valid xml doc>
         
         #for docs on XMLParser
@@ -298,7 +298,14 @@ class Command(BaseCommand):
                             if v.lemma in freqDict:
                                 v.frequent = True
                             v = self.getTaggedVerb(verbWord.tag, v)
-                            v.irregular = not self.isRegular(v) 
+                            regular = self.isRegular(v)
+                            if None == regular:
+                                #if the verb lemma does not appear to be verb-ish
+                                print v.token, 'was skipped'
+                                continue 
+                            else:
+                                v.irregular = not regular 
+
                             v.save() 
                             pp(v)
                             #@todo flush v to db

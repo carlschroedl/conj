@@ -526,7 +526,8 @@ def regularlyConjugate(lemma, mood, tense='', person='', plurality='', formal=Fa
                 print "Future subjunctive not supported."
                 return False 
             else:
-                raise Exception('"%s" is not a valid tense for mood "subjunctive"' % tense)
+                print ('"%s" is not a valid tense for mood "subjunctive"' % tense)
+                return False
 
         if 'imperative' == mood:
             if 'firstPerson' == person and 'singular' == plurality:
@@ -548,14 +549,16 @@ def regularlyConjugate(lemma, mood, tense='', person='', plurality='', formal=Fa
             elif False == affirmative:
                 return neg
             else:
-                raise Exception('"%s" is not a valid option. Use true, false, or None' % affirmative)
+                print ('"%s" is not a valid option. Use true, false, or None' % affirmative)
+                return False
         if 'gerund' == mood:
             if 'ar' == cat:
                 return verbStem + 'ando'    
             elif 'er' == cat or 'ir' == cat:
                 return verbStem + 'iendo'
             else:
-                raise Exception("invalid verb category")
+                print ("invalid verb category")
+                return False
         if 'participle' == mood:
             ending = ''
             if 'ar' == cat:
@@ -572,8 +575,8 @@ def regularlyConjugate(lemma, mood, tense='', person='', plurality='', formal=Fa
             elif 'feminine' == gender:
                 ending += 'a'
             else:
-                raise Exception("invalid gender")
-            
+                print ("invalid gender")
+                return False
             if 'singular' == plurality:
                 if None == gender:
                     return (verbStem + ending0, verbStem + ending1)
@@ -588,10 +591,12 @@ def regularlyConjugate(lemma, mood, tense='', person='', plurality='', formal=Fa
                     ending += 's'
                     return verbStem+ending
             else:
-                raise Exception('invalid plurality')
+               print ('invalid plurality')
+               return False
 
         else:
-            raise Exception("invalid mood") 
+            print ("invalid mood")
+            return False
 
 ##########################################################
 # </general-purpose Spanish verb functionality>
