@@ -36,7 +36,7 @@ class Command(BaseCommand):
     def preprocess(self, filename):
         for line in fileinput.input(filename, inplace=True):
             if '&' in line:
-                line = line.replace('&', 'and')
+                line = line.replace('&', 'y')
             if (line[0] == '<' and line[:4] == '<doc'):
                 # if there's more than 10 quotation marks, there are extra in the title
                 if line.count('"') > 10:
