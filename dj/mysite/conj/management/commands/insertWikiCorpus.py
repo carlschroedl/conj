@@ -37,7 +37,7 @@ class Command(BaseCommand):
         for line in fileinput.input(filename, inplace=True):
             if '&' in line:
                 line = line.replace('&', 'y')
-            if (line[0] == '<' and line[:4] == '<doc'):
+            if line[:4] == '<doc':
                 # if there's more than 10 quotation marks, there are extra in the title
                 if line.count('"') > 10:
                     # get the beginning index of the title
@@ -56,9 +56,9 @@ class Command(BaseCommand):
                     line = b + m + e
                     
                 print line,
-            elif (line[0] == '<' and line[:6] == '</doc>'):
+            elif line[:6] == '</doc>' or line[:9] == '<![CDATA[' or line[:6] == '<root>' or line[:7] == '</root>':
                  print line,
-            elif (line[0] == '<' and line[:4] != '<doc') and (line[0] == '<' and line[:6] != '</doc>'):
+            elif line[0] == '<':
                  print '<![CDATA[' + line[:-1] + ']]>\n',
             elif line[0] == '>':
                  print '<![CDATA[' + line[:-1] + ']]>\n',
