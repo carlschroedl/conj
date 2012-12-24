@@ -24,7 +24,7 @@ The two-pass parser extracts document, sentence, and verb information from wikic
 ------------------
 We were able to do some additional preprocessing of the wikicorpus and we were 
 able to define the top 1000 most common verbs in the corpus. The human readable 
-output of this analysis can be found in /freq/output.txt. We then determined 
+output of this analysis can be found in freq/output.txt. We then determined 
 that a verb could be defined as 'frequent' if it occurred in more than 1% of 
 the corpus. This amounted to 478 verbs (out of over 86,000 total) that are 
 stored in a Python dictionary object in the file freq.pkl.
@@ -86,6 +86,15 @@ From the dj/mysite/ directory
 ##Using the web app
 Go to http://localhost:8000 to begin the exercises.
 
+##Running Frequency Analysis
+----------------
+The frequency analysis runs on a folder of Wikicorpus dump files called tagged-es that is located two directories above the freq/ directory (or you can change the location of where the script looks for the files on line 14 of freq/freq.py). To use the frequency analysis you can run:
+```
+python freq.py
+```
+from the freq/ directory. This will generate some intermediate data and then update the frequency pickles.
+
+
 #Configuration
 ---------
 
@@ -134,5 +143,4 @@ The regular conjugator can easily be extended to support the uncommon future sub
 ##Theme
 -----
 The main UI and templates for the site were generated from Twitter's Bootstrap 
-See this page for more information on the CSS classes and components 
-http://twitter.github.com/bootstrap/
+See this page for more information on the CSS classes and components http://twitter.github.com/bootstrap/
